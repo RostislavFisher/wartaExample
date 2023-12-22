@@ -1,185 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Draggable News Card</title>
-  <style>
-  
-    body {
-      display: flex;
-      font-family: 'Roboto', sans-serif;
-      justify-content: space-between;
-      align-items: flex-start;
-      height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-    
-    .block {
-      width: 30%;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 5px;
-      min-height: 200px;
-    }
+    <meta charset="UTF-8">
+    <title>Draggable News Card</title>
+    <style>
 
-    .news-card {
-      margin-bottom: 10px;
-      background-color: #f9f9f9;
-      padding: 10px;
-      border: 1px solid #ddd;
-      cursor: move;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border-radius: 5px;
-    }
+        body {
+            display: flex;
+            font-family: 'Roboto', sans-serif;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-    .news-card-image {
-      border-radius: 5px;
-      width: 100%;
-      height: 150px;
-      background-size: cover;
-      background-position: center;
-      margin-bottom: 10px;
-    }
+        .block {
+            width: 30%;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 5px;
+            min-height: 200px;
+        }
 
-    .news-card-title {
-      font-weight: bold;
-    }
-  </style>
+        .news-card {
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            cursor: move;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 5px;
+        }
+
+        .news-card-image {
+            border-radius: 5px;
+            width: 100%;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 10px;
+        }
+
+        .news-card-title {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <div class="block" id="right-block" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <h2>Examples</h2>
-            <textarea placeholder="Enter your prompt here"></textarea>
+<div class="block" id="right-block" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <h2>Examples</h2>
+    <textarea placeholder="Enter your prompt here"></textarea>
+    <textarea id="filterScript" placeholder="Enter your filter script here"></textarea>
+    <button onclick="applyFilter()">Apply Filter</button>
 
 </div>
 
-  <div class="block" id="left-block" ondrop="drop(event)" ondragover="allowDrop(event)">
-  <h2>All publications</h2>   
-  </div>
-
-  <div class="block" id="right-block" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <h2>Publications that fit user's rules</h2>
+<div class="block" id="left-block" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <h2>All publications</h2>
 </div>
 
-  <div class="block" id="down-block" ondrop="drop(event)" ondragover="allowDrop(event)">
+<div class="block" id="fits-block" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <h2>Publications that fit user's rules</h2>
+</div>
+
+<div class="block" id="doesNotFit-block" ondrop="drop(event)" ondragover="allowDrop(event)">
     <h2>Publications that doesn't fit user's rules</h2>
 </div>
 
-  <script>
-  
-const newsData = [
-  {
-    imageUrl: 'https://iprpraha.cz/assets/page/fit2_1920_1080/fwczggslhk_._image.png',
-    title: 'Public participation is helping to shape a new, sustainable neighborhood planned for Letňany'
-  },
-  {
-    imageUrl: 'https://praguemorning.cz/wp-content/uploads/2023/12/Minimum-Wage-czechia.jpg',
-    title: 'Czech Government Approves CZK 1,600 Increase in Minimum Wage'
-  },
-  {
-    imageUrl: 'https://www.expats.cz/images/publishing/articles/2023/02/1280_650/original-plan-for-ostrava-tower-photo-chybik-kristof-pfrjy.webp',
-    title: 'Plans for Czechia’s tallest skyscraper back to square one'
-  },
-  {
-    imageUrl: 'https://english.radio.cz/sites/default/files/styles/cro_16x9_tablet/public/images/8fd4570a0dd1ec7c04a8106b9c1a76c7.jpg?itok=Xh5dCjQN&timestamp=1703158536',
-    title: 'Don’t keep carp in bath, say officials as Xmas fish hits Czech streets'
-  },
-  {
-    imageUrl: 'https://english.radio.cz/sites/default/files/styles/cro_16x9_tablet/public/images/4bc16a46f0d912e8e3638ec24eaea498.jpg?itok=BB1s00QF&timestamp=1702994308',
-    title: 'Pavel comments put spotlight on government policy messaging'
-  },
-  {
-    imageUrl: 'https://praguemorning.cz/wp-content/uploads/2023/12/James-Bond-Exhibition-prague.jpg',
-    title: 'Bond\'s auto in the city of Prague'
-  },
-  {
-    imageUrl: 'https://static.independent.co.uk/2023/12/21/14/Czech_Republic_Central_Bank_84095.jpg?quality=75&width=990&height=614&fit=bounds&format=pjpg&crop=16%3A9%2Coffset-y0.5&auto=webp',
-    title: 'The Czech central bank cuts key interest rate for the first time since June 2022 to help economy'
-  },
-  {
-    imageUrl: 'https://www.expats.cz/images/publishing/articles/2021/12/1280_650/work-will-start-on-the-upper-part-of-malostranske-namesti-photo-ipr-qpqpd.webp',
-    title: 'Malostranské náměstí renovation will finally begin this spring'
-  },
-  {
-    imageUrl: 'https://aroundprague.cz/assets/images/resources/31465/snimok-ekrana-2023-12-20-203024.png',
-    title: 'Reconstruction of Masaryk Station in Prague will cost 3.39 billion'
-  },
-  {
-    imageUrl: 'https://aroundprague.cz/assets/images/resources/31137/metro.jpg',
-    title: 'Pankratz metro station will be closed for a year'
-  },
-  {
-    imageUrl: 'https://aroundprague.cz/assets/images/resources/30758/metro.jpg',
-    title: 'The metro between Mustek and Deyvitskaya stations will not operate on weekends'
-  },
-  {
-    imageUrl: 'https://aroundprague.cz/assets/images/resources/30505/tramva.jpg',
-    title: 'Two trams collided in Prague. Driver with serious injuries put into artificial sleep'
-  },
-  {
-    imageUrl: 'https://aroundprague.cz/assets/images/resources/30073/konevova.jpg',
-    title: 'Two trams collided in Prague. Driver with serious injuries put into artificial sleep'
-  },
-  {
-    imageUrl: 'https://aroundprague.cz/assets/images/resources/29778/open.jpg',
-    title: 'The Open House Festival Prague attracted a record number of visitors'
-  }
-  // Add other publications similarly
-];
+<script>
+    function applyFilter() {
+        const filterScript = document.getElementById('filterScript').value;
+        const filterFunction = new Function('publication', filterScript);
+
+        const publicationsBlock = document.getElementById('fits-block');
+        const publicationsDoNotFitBlock = document.getElementById('doesNotFit-block');
+
+        newsData.forEach((publication, index) => {
+            if (filterFunction(publication)) {
+                console.log(publication.publicationDate.year)
+                const newsCard = document.getElementById(index);
+                if (newsCard) {
+                    publicationsBlock.appendChild(newsCard);
+                }
+            }
+            else{
+                const newsCard = document.getElementById(index);
+                if (newsCard) {
+                    publicationsDoNotFitBlock.appendChild(newsCard);
+                }
+
+            }
+        });
+    }
+
+    const newsData = [
+        {
+            imageUrl: 'https://iprpraha.cz/assets/page/fit2_1920_1080/fwczggslhk_._image.png',
+            title: 'Public participation is helping to shape a new, sustainable neighborhood planned for Letňany',
+            publicationDate: new Date('December 22, 2024')
+        },
+        {
+            imageUrl: 'https://praguemorning.cz/wp-content/uploads/2023/12/Minimum-Wage-czechia.jpg',
+            title: 'Czech Government Approves CZK 1,600 Increase in Minimum Wage',
+            publicationDate: new Date('December 8, 2023')
+        },
+        {
+            imageUrl: 'https://www.expats.cz/images/publishing/articles/2023/02/1280_650/original-plan-for-ostrava-tower-photo-chybik-kristof-pfrjy.webp',
+            title: 'Plans for Czechia’s tallest skyscraper back to square one',
+            publicationDate: new Date('May 22, 2022')
+        },
+        {
+            imageUrl: 'https://english.radio.cz/sites/default/files/styles/cro_16x9_tablet/public/images/8fd4570a0dd1ec7c04a8106b9c1a76c7.jpg?itok=Xh5dCjQN&timestamp=1703158536',
+            title: 'Don’t keep carp in bath, say officials as Xmas fish hits Czech streets',
+            publicationDate: new Date('July 12, 2023')
+        },
+        {
+            imageUrl: 'https://english.radio.cz/sites/default/files/styles/cro_16x9_tablet/public/images/4bc16a46f0d912e8e3638ec24eaea498.jpg?itok=BB1s00QF&timestamp=1702994308',
+            title: 'Pavel comments put spotlight on government policy messaging',
+            publicationDate: new Date('April 24, 2023')
+        },
+        {
+            imageUrl: 'https://praguemorning.cz/wp-content/uploads/2023/12/James-Bond-Exhibition-prague.jpg',
+            title: 'Bond\'s auto in the city of Prague',
+            publicationDate: new Date('August 28, 2023')
+        },
+        {
+            imageUrl: 'https://static.independent.co.uk/2023/12/21/14/Czech_Republic_Central_Bank_84095.jpg?quality=75&width=990&height=614&fit=bounds&format=pjpg&crop=16%3A9%2Coffset-y0.5&auto=webp',
+            title: 'The Czech central bank cuts key interest rate for the first time since June 2022 to help economy',
+            publicationDate: new Date('September 14, 2023')
+        },
+        {
+            imageUrl: 'https://www.expats.cz/images/publishing/articles/2021/12/1280_650/work-will-start-on-the-upper-part-of-malostranske-namesti-photo-ipr-qpqpd.webp',
+            title: 'Malostranské náměstí renovation will finally begin this spring',
+            publicationDate: new Date('January 18, 2023')
+        },
+        {
+            imageUrl: 'https://aroundprague.cz/assets/images/resources/31465/snimok-ekrana-2023-12-20-203024.png',
+            title: 'Reconstruction of Masaryk Station in Prague will cost 3.39 billion',
+            publicationDate: new Date('December 18, 2023')
+        },
+        {
+            imageUrl: 'https://aroundprague.cz/assets/images/resources/31137/metro.jpg',
+            title: 'Pankratz metro station will be closed for a year',
+            publicationDate: new Date('November 9, 2023')
+        },
+        {
+            imageUrl: 'https://aroundprague.cz/assets/images/resources/30758/metro.jpg',
+            title: 'The metro between Mustek and Deyvitskaya stations will not operate on weekends',
+            publicationDate: new Date('June 9, 2023')
+        },
+        {
+            imageUrl: 'https://aroundprague.cz/assets/images/resources/30505/tramva.jpg',
+            title: 'Two trams collided in Prague. Driver with serious injuries put into artificial sleep',
+            publicationDate: new Date('June 15, 2023')
+        },
+        {
+            imageUrl: 'https://aroundprague.cz/assets/images/resources/30073/konevova.jpg',
+            title: 'Two trams collided in Prague. Driver with serious injuries put into artificial sleep',
+            publicationDate: new Date('September 12, 2023')
+        },
+        {
+            imageUrl: 'https://aroundprague.cz/assets/images/resources/29778/open.jpg',
+            title: 'The Open House Festival Prague attracted a record number of visitors',
+            publicationDate: new Date('February 1, 2023')
+        }
+    ];
 
     function renderNews() {
-      const leftBlock = document.getElementById('left-block');
+        const leftBlock = document.getElementById('left-block');
 
-      newsData.forEach((news, index) => {
-        const newsCard = document.createElement('div');
-        newsCard.className = 'news-card';
-        newsCard.id = index;
-        newsCard.draggable = true;
-        newsCard.setAttribute('ondragstart', 'drag(event)');
+        newsData.forEach((news, index) => {
+            const newsCard = document.createElement('div');
+            newsCard.className = 'news-card';
+            newsCard.id = index;
+            newsCard.draggable = true;
+            newsCard.setAttribute('ondragstart', 'drag(event)');
 
-        const newsImage = document.createElement('div');
-        newsImage.className = 'news-card-image';
-        newsImage.style.backgroundImage = `url('${news.imageUrl}')`;
+            const newsImage = document.createElement('div');
+            newsImage.className = 'news-card-image';
+            newsImage.style.backgroundImage = `url('${news.imageUrl}')`;
 
-        const newsTitle = document.createElement('div');
-        newsTitle.className = 'news-card-title';
-        newsTitle.textContent = news.title;
+            const newsTitle = document.createElement('div');
+            newsTitle.className = 'news-card-title';
+            newsTitle.textContent = news.title;
 
-        newsCard.appendChild(newsImage);
-        newsCard.appendChild(newsTitle);
+            const newsTimestamp = document.createElement('div');
+            newsTimestamp.className = 'news-card-timestamp';
+            newsTimestamp.textContent = `Published: ${news.publicationDate}`;
 
-        leftBlock.appendChild(newsCard);
-      });
+
+            newsCard.appendChild(newsImage);
+            newsCard.appendChild(newsTitle);
+            newsCard.appendChild(newsTimestamp);
+
+            leftBlock.appendChild(newsCard);
+        });
     }
 
     renderNews();
 
-  
-function allowDrop(ev) {
-  ev.preventDefault();
-}
 
-function drag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
-}
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
 
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
-  var draggedElement = document.getElementById(data);
-  var targetBlock = ev.target;
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
 
-  while (targetBlock && !targetBlock.classList.contains('block')) {
-    targetBlock = targetBlock.parentElement;
-  }
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var draggedElement = document.getElementById(data);
+        var targetBlock = ev.target;
 
-  if (targetBlock) {
-    targetBlock.appendChild(draggedElement);
-  }
-}
-  </script>
+        while (targetBlock && !targetBlock.classList.contains('block')) {
+            targetBlock = targetBlock.parentElement;
+        }
+
+        if (targetBlock) {
+            targetBlock.appendChild(draggedElement);
+        }
+    }
+</script>
 </body>
 </html>
